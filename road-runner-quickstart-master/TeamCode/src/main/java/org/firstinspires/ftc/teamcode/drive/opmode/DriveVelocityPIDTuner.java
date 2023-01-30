@@ -51,7 +51,7 @@ import java.util.List;
 @Config
 @Autonomous(group = "drive")
 public class DriveVelocityPIDTuner extends LinearOpMode {
-    public static double DISTANCE = 72; // in
+    public static double DISTANCE = 20; // in
 
     enum Mode {
         DRIVER_MODE,
@@ -164,6 +164,11 @@ public class DriveVelocityPIDTuner extends LinearOpMode {
                 lastKd = MOTOR_VELO_PID.d;
                 lastKf = MOTOR_VELO_PID.f;
             }
+            drive.update();
+
+            Pose2d poseEstimate = drive.getPoseEstimate();
+            telemetry.addData("x", poseEstimate.getX());
+            telemetry.addData("y", poseEstimate.getY());
 
             telemetry.update();
         }
