@@ -72,7 +72,7 @@ public class Camera extends LinearOpMode
             @Override
             public void onOpened()
             {
-                camera.startStreaming(800,448, OpenCvCameraRotation.UPRIGHT);
+                camera.startStreaming(1280,720, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
@@ -166,14 +166,14 @@ public class Camera extends LinearOpMode
         }
 
         /* Actually do something useful */
-       if(tagOfInterest.id == left)
+        if(tagOfInterest == null){}
+        else if(tagOfInterest.id == left)
            telemetry.addLine(String.format("left"));
        else if(tagOfInterest.id == right)
            telemetry.addLine(String.format("right"));
        else if(tagOfInterest.id == middle)
            telemetry.addLine(String.format("middle"));
-
-
+       telemetry.update();
         /* You wouldn't have this in your autonomous, this is just to prevent the sample from ending */
         while (opModeIsActive()) {sleep(20);}
     }
