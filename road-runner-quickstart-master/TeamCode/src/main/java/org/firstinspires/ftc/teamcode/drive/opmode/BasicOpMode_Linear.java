@@ -39,6 +39,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
+import org.firstinspires.ftc.teamcode.drive.linearSlideFunctions;
 
 import org.firstinspires.ftc.teamcode.util.Encoder;
 
@@ -66,26 +67,29 @@ public class BasicOpMode_Linear extends LinearOpMode {
     private DcMotor motorFrontRight = null;
     private DcMotor motorBackRight = null;
 
+
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
+        linearSlideFunctions.init(hardwareMap);
 
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
 
-        DcMotor motorFrontLeft = hardwareMap.get(DcMotor.class, "motorFrontLeft");
-        DcMotor motorBackLeft = hardwareMap.get(DcMotor.class, "motorBackLeft");
-        DcMotor motorFrontRight = hardwareMap.get(DcMotor.class, "motorFrontRight");
-        DcMotor motorBackRight = hardwareMap.get(DcMotor.class, "motorBackRight");
-//
-//        Encoder leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "motorFrontRight"));
-//        Encoder rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "motorBackLeft"));
-//        Encoder frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "motorFrontLeft"));
+       // DcMotor motorFrontLeft = hardwareMap.get(DcMotor.class, "motorFrontLeft");
+        //DcMotor motorBackLeft = hardwareMap.get(DcMotor.class, "motorBackLeft");
+        //DcMotor motorFrontRight = hardwareMap.get(DcMotor.class, "motorFrontRight");
+        //DcMotor motorBackRight = hardwareMap.get(DcMotor.class, "motorBackRight");
 
-        motorFrontLeft.setDirection(DcMotor.Direction.REVERSE);
-        motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        //
+        //Encoder leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "motorFrontRight"));
+        //Encoder rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "motorBackLeft"));
+        //Encoder frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "motorFrontLeft"));
+
+     //   motorFrontLeft.setDirection(DcMotor.Direction.REVERSE);
+      //  motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
@@ -95,11 +99,17 @@ public class BasicOpMode_Linear extends LinearOpMode {
         runtime.reset();
         long initialTime = System.currentTimeMillis();
 
+        double pos0 = 0.5, pos1 = 0.5;
+        boolean up_pressed = false;
+        boolean down_pressed = false;
+        boolean a_pressed = false;
+        boolean b_pressed = false;
         // run until the end of the match (driver presses STOP)
-        while (opModeIsActive()) {
+        while (opModeIsActive() && !isStopRequested()) {
             double y = -gamepad1.left_stick_y; // Remember, this is reversed!
             double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
             double rx = gamepad1.right_stick_x;
+            linearSlideFunctions.move(gamepad1);
 //            x=0;
 //            rx=0;
 //                if(System.currentTimeMillis()-initialTime>3000){
@@ -117,17 +127,22 @@ public class BasicOpMode_Linear extends LinearOpMode {
             double frontRightPower = (y - x - rx) / denominator;
             double backRightPower = (y + x - rx) / denominator;
 
-            motorFrontLeft.setPower(frontLeftPower);
-            motorBackLeft.setPower(backLeftPower);
-            motorFrontRight.setPower(frontRightPower);
-            motorBackRight.setPower(backRightPower);
+          //  motorFrontLeft.setPower(frontLeftPower);
+           // motorBackLeft.setPower(backLeftPower);
+            //motorFrontRight.setPower(frontRightPower);
+            //motorBackRight.setPower(backRightPower);
             // Show the elapsed game time and wheel power.
-
+         //   telemetry.addData("servo pos: ", servo.getPosition());
+           // telemetry.addData("left slide ticks: ", motorSlideLeft.getCurrentPosition());
+            //telemetry.addData("right slide ticks: ", motorSlideRight.getCurrentPosition());
+            telemetry.update();
 //            telemetry.addData("Encoder stanga: ", leftEncoder.getCurrentPosition());
 //            telemetry.addData("Encoder dreapta: ", rightEncoder.getCurrentPosition());
 //            telemetry.addData("Encoder fata: ", frontEncoder.getCurrentPosition());
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.update();
+            //telemetry.addData("Status", "Run Time: " + runtime.toString());
+          //  telemetry.update();
+
+
         }
     }
 }
