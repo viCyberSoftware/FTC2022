@@ -107,7 +107,7 @@ public class Robot {
             motorSlideLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             motorSlideRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-            initialPosition = motorSlideLeft.getCurrentPosition();
+            //initialPosition = motorSlideLeft.getCurrentPosition();
 
             motorSlideRight.setDirection(DcMotorSimple.Direction.REVERSE);
             motorSlideRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -189,7 +189,7 @@ public class Robot {
 
         public void update() {
             if (slidersMoving() && motorsAtTarget()) {
-                telemetry.addData("","");
+              //  telemetry.addData("","");
                 stage = Stage.SLIDER_STATIONARY;
             }
         }
