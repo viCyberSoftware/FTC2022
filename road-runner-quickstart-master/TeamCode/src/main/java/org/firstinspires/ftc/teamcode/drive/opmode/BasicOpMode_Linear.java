@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.teamcode.drive.Robot;
+import org.firstinspires.ftc.teamcode.drive.Robot.Robot;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.drive.linearSlideFunctions;
 
@@ -39,6 +39,7 @@ public class BasicOpMode_Linear extends LinearOpMode {
         robot.init(hardwareMap,gamepad1,gamepad2);
         while (opModeIsActive() && !isStopRequested()) {
             robot.control();
+
         }
     }
 }

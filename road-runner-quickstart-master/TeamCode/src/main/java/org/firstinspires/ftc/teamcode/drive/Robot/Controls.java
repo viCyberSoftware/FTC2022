@@ -1,5 +1,7 @@
-package org.firstinspires.ftc.teamcode.drive;
+package org.firstinspires.ftc.teamcode.drive.Robot;
 import com.qualcomm.robotcore.hardware.Gamepad;
+
+import org.firstinspires.ftc.teamcode.drive.Robot.Robot;
 
 public class Controls {
 
@@ -14,6 +16,7 @@ public class Controls {
         if(gamepad1.cross){
             robot.linearSlide.moveDown();
         }
+        robot.update();
     }
     public void init(Gamepad gamepad1, Gamepad gamepad2){
         this.gamepad1 = gamepad1;
