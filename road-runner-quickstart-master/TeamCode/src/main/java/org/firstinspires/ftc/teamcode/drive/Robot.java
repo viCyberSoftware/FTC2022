@@ -1,15 +1,23 @@
 package org.firstinspires.ftc.teamcode.drive;
 
+
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
+import org.firstinspires.ftc.teamcode.drive.Controls;
 
 public class Robot {
     public Transfer transfer = null;
     public Claw claw = null;
+    public LinearSlide linearSlide = null;
+    public Controls controls = null;
 
     public static class Transfer {
         public enum State {
@@ -65,9 +73,9 @@ public class Robot {
     public static class LinearSlide {
         public enum State {
             SLIDER_GROUND(initialPosition),
-            SLIDER_LOW(750),
-            SLIDER_MIDDLE(1500),
-            SLIDER_HIGH(2200);
+            SLIDER_LOW(initialPosition + 750),
+            SLIDER_MIDDLE(initialPosition + 1500),
+            SLIDER_HIGH(initialPosition + 2200);
 
             private int position;
 
@@ -142,6 +150,7 @@ public class Robot {
         }
 
         public void moveUp() {
+            if(!slidersMoving()){
             switch (state) {
                 case SLIDER_GROUND:
                     state = State.SLIDER_LOW;
@@ -158,28 +167,32 @@ public class Robot {
             stage = Stage.SLIDER_MOVING_UP;
             setTargetPosition(state.getPosition());
             motorsOn();
+            }
         }
 
         public void moveDown() {
-            switch (state) {
-                case SLIDER_HIGH:
-                    state = State.SLIDER_MIDDLE;
-                    break;
+            if(!slidersMoving()) {
+                switch (state) {
+                    case SLIDER_HIGH:
+                        state = State.SLIDER_MIDDLE;
+                        break;
 
-                case SLIDER_MIDDLE:
-                    state = State.SLIDER_LOW;
-                    break;
+                    case SLIDER_MIDDLE:
+                        state = State.SLIDER_LOW;
+                        break;
 
-                case SLIDER_LOW:
-                    state = State.SLIDER_GROUND;
+                    case SLIDER_LOW:
+                        state = State.SLIDER_GROUND;
+                }
+                stage = Stage.SLIDER_MOVING_DOWN;
+                setTargetPosition(state.getPosition());
+                motorsOn();
             }
-            stage = Stage.SLIDER_MOVING_DOWN;
-            setTargetPosition(state.getPosition());
-            motorsOn();
         }
 
         public void update() {
             if (slidersMoving() && motorsAtTarget()) {
+                telemetry.addData("","");
                 stage = Stage.SLIDER_STATIONARY;
                 if(state == State.SLIDER_GROUND) motorsOff();
             }
@@ -276,16 +289,40 @@ public class Robot {
         }
     }
 
-    public void init(HardwareMap hardwareMap) {
+    private void initMecanumDrive(HardwareMap hardwareMap, Gamepad gamepad1, Gamepad gamepad2){
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        drive.setWeightedDrivePower(
+                new Pose2d(
+                        -gamepad1.left_stick_y,
+                        -gamepad1.left_stick_x,
+                        -gamepad1.right_stick_x
+                )
+        );
+        drive.update();
+    }
+
+    public void init(HardwareMap hardwareMap, Gamepad gamepad1, Gamepad gamepad2) {
         claw = new Claw();
         transfer = new Transfer();
-
+        linearSlide = new LinearSlide();
+        controls = new Controls();
+        controls.init(gamepad1,gamepad2);
+        initMecanumDrive(hardwareMap,gamepad1,gamepad2);
+        linearSlide.init(hardwareMap);
         claw.init(hardwareMap);
         transfer.init(hardwareMap);
+
+    }
+    public void control(){
+        controls.control(this);
     }
 
     public void update() {
         claw.update();
         transfer.update();
+        linearSlide.update();
     }
+
+
 }

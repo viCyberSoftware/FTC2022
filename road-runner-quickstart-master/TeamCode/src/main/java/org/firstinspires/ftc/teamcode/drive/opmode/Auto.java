@@ -37,6 +37,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.LightSensor;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.SwitchableLight;
 import org.firstinspires.ftc.teamcode.drive.Robot;
 
@@ -68,16 +69,39 @@ public class Auto extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        Robot robot = new Robot();
-        robot.init(hardwareMap);
+        waitForStart();
+
+        Servo servo0 = hardwareMap.get(Servo.class, "servo0");
+        Servo servo1 = hardwareMap.get(Servo.class, "servo1");
+        Servo servo2 = hardwareMap.get(Servo.class, "servo2");
+        servo1.setDirection(Servo.Direction.REVERSE);
+        servo0.setPosition(0.5);
+        servo1.setPosition(0.5);
+        servo2.setPosition(0);
+
+        boolean up_pressed = false;
+        boolean down_pressed = false;
 
         while (opModeIsActive() && !isStopRequested()) {
-            robot.update();
-            telemetry.addData("claw openstate: ", robot.claw.openState);
-            telemetry.addData("claw rotationstate: ", robot.claw.rotationState);
-            telemetry.addData("claw openstate: ", robot.transfer.servoLeft);
-            telemetry.addData("claw openstate: ", robot.claw.openState);
-            telemetry.update();
+            if (gamepad1.dpad_up) {
+                if (!up_pressed) {
+                    servo0.setPosition(servo0.getPosition() + 0.05);
+                    servo1.setPosition(servo1.getPosition() + 0.05);
+                }
+                up_pressed = true;
+            } else {
+                up_pressed = false;
+            }
+
+            if (gamepad1.dpad_down) {
+                if (!down_pressed) {
+                    servo0.setPosition(servo0.getPosition() - 0.05);
+                    servo1.setPosition(servo1.getPosition() - 0.05);
+                }
+                down_pressed = true;
+            } else {
+                down_pressed = false;
+            }
         }
     }
 }
