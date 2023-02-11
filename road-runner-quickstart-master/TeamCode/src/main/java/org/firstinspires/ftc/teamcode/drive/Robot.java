@@ -72,10 +72,10 @@ public class Robot {
 
     public static class LinearSlide {
         public enum State {
-            SLIDER_GROUND(initialPosition),
-            SLIDER_LOW(initialPosition + 750),
-            SLIDER_MIDDLE(initialPosition + 1500),
-            SLIDER_HIGH(initialPosition + 2200);
+            SLIDER_GROUND(0),
+            SLIDER_LOW(750),
+            SLIDER_MIDDLE(1500),
+            SLIDER_HIGH(2200);
 
             private int position;
 
@@ -96,7 +96,6 @@ public class Robot {
 
         public static DcMotorEx motorSlideLeft = null;
         public static DcMotorEx motorSlideRight = null;
-        public static int initialPosition = 0;
 
         public State state = null;
         public Stage stage = null;
@@ -113,10 +112,7 @@ public class Robot {
             motorSlideRight.setDirection(DcMotorSimple.Direction.REVERSE);
             motorSlideRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             motorSlideLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            motorSlideRight.setPower(0.5);
-            motorSlideLeft.setPower(0.5);
-            motorSlideLeft.setTargetPosition(motorSlideLeft.getCurrentPosition());
-            motorSlideRight.setTargetPosition(motorSlideRight.getCurrentPosition());
+            motorsOn();
 
             state = State.SLIDER_GROUND;
             stage = Stage.SLIDER_STATIONARY;
@@ -134,11 +130,11 @@ public class Robot {
         }
 
         private boolean motorsAtTarget() {
-            return (motorSlideRight.getCurrentPosition() == motorSlideRight.getTargetPosition() && motorSlideLeft.getCurrentPosition() == motorSlideLeft.getTargetPosition());
+            return (motorSlideRight.getCurrentPosition() == motorSlideRight.getTargetPosition() || motorSlideLeft.getCurrentPosition() == motorSlideLeft.getTargetPosition());
         }
 
         private void motorsOn() {
-            setMotorsPower(0.5);
+            setMotorsPower(0.8);
         }
 
         private void motorsOff() {
@@ -194,7 +190,6 @@ public class Robot {
             if (slidersMoving() && motorsAtTarget()) {
                 telemetry.addData("","");
                 stage = Stage.SLIDER_STATIONARY;
-                if(state == State.SLIDER_GROUND) motorsOff();
             }
         }
 
