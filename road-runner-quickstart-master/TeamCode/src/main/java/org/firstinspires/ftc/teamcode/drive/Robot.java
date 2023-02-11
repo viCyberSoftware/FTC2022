@@ -171,7 +171,7 @@ public class Robot {
         }
 
         public void moveDown() {
-            if(!slidersMoving()) {
+            if (!slidersMoving()) {
                 switch (state) {
                     case SLIDER_HIGH:
                         state = State.SLIDER_MIDDLE;
@@ -183,6 +183,7 @@ public class Robot {
 
                     case SLIDER_LOW:
                         state = State.SLIDER_GROUND;
+                        break;
                 }
                 stage = Stage.SLIDER_MOVING_DOWN;
                 setTargetPosition(state.getPosition());
