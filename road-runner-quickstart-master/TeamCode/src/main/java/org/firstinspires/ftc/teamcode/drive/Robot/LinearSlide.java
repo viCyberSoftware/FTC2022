@@ -7,10 +7,11 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class LinearSlide {
     public enum State {
-        SLIDER_GROUND(0),
-        SLIDER_LOW(750),
-        SLIDER_MIDDLE(1500),
-        SLIDER_HIGH(2200);
+        SLIDER_GROUND(initialPosition + 0),
+        SLIDER_LOW(initialPosition + 750),
+        SLIDER_MIDDLE(initialPosition +1500),
+        SLIDER_HIGH(initialPosition + 2200),
+        SLIDER_FREE_CONTROL(initialPosition + 0) ;
 
         private int position;
 
@@ -35,6 +36,8 @@ public class LinearSlide {
     public State state = null;
     public Stage stage = null;
 
+    public static int initialPosition = 0;
+
     public void init(HardwareMap hardwareMap) {
         motorSlideLeft = hardwareMap.get(DcMotorEx.class, "motorSlideLeft");
         motorSlideRight = hardwareMap.get(DcMotorEx.class, "motorSlideRight");
@@ -43,6 +46,8 @@ public class LinearSlide {
         motorSlideRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //initialPosition = motorSlideLeft.getCurrentPosition();
+        motorSlideRight.setTargetPosition(0);
+        motorSlideLeft.setTargetPosition(0);
 
         motorSlideRight.setDirection(DcMotorSimple.Direction.REVERSE);
         motorSlideRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -80,44 +85,33 @@ public class LinearSlide {
         return (stage == Stage.SLIDER_MOVING_UP || stage == Stage.SLIDER_MOVING_DOWN);
     }
 
-    public void moveUp() {
-        if(!slidersMoving()){
-            switch (state) {
-                case SLIDER_GROUND:
-                    state = State.SLIDER_LOW;
-                    break;
-
-                case SLIDER_LOW:
-                    state = State.SLIDER_MIDDLE;
-                    break;
-
-                case SLIDER_MIDDLE:
-                    state = State.SLIDER_HIGH;
-                    break;
-            }
-            stage = Stage.SLIDER_MOVING_UP;
-            setTargetPosition(state.getPosition());
-            motorsOn();
+    public void moveTo(State newState){
+        if(this.state.position < newState.position){
+            this.stage = Stage.SLIDER_MOVING_UP;
         }
+        else if(this.state.position > newState.position){
+            this.stage = Stage.SLIDER_MOVING_DOWN;
+        }
+       this.state = newState;
+        motorsOn();
+        setTargetPosition(state.getPosition());
     }
 
-    public void moveDown() {
-        if (!slidersMoving()) {
-            switch (state) {
-                case SLIDER_HIGH:
-                    state = State.SLIDER_MIDDLE;
-                    break;
+    public void moveUp(int distance) {
+        this.state = State.SLIDER_FREE_CONTROL;
+        stage = Stage.SLIDER_MOVING_UP;
+        int newPosition = motorSlideLeft.getCurrentPosition() + distance;// de vazut
+        if(newPosition<=State.SLIDER_HIGH.position)
+            setTargetPosition(newPosition);
+            motorsOn();
+        }
 
-                case SLIDER_MIDDLE:
-                    state = State.SLIDER_LOW;
-                    break;
-
-                case SLIDER_LOW:
-                    state = State.SLIDER_GROUND;
-                    break;
-            }
-            stage = Stage.SLIDER_MOVING_DOWN;
-            setTargetPosition(state.getPosition());
+    public void moveDown(int distance) {
+        this.state = State.SLIDER_FREE_CONTROL;
+        stage = Stage.SLIDER_MOVING_DOWN;
+        int newPosition = motorSlideLeft.getCurrentPosition() - distance;// de vazut
+        if(newPosition>=0) {
+            setTargetPosition(newPosition);
             motorsOn();
         }
     }

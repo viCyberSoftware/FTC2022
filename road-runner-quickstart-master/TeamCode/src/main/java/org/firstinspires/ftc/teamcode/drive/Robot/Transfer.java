@@ -9,11 +9,12 @@ public class Transfer {
         TRANSFER_FRONT,
         TRANSFER_BACK,
         TRANSFER_MOVING_FRONT,
-        TRANSFER_MOVING_BACK
+        TRANSFER_MOVING_BACK,
+        UNDEFINED
     }
 
-    static final double SERVO_FRONT = 0; //de vazut!!!
-    static final double SERVO_BACK = 0; //devazut!!!
+    static final double SERVO_FRONT = 0.05; //de vazut!!!
+    static final double SERVO_BACK = 0.05; //devazut!!!
 
     static final double MOVING_TIME = 2; //in seconds!
 
@@ -28,22 +29,26 @@ public class Transfer {
         servoRight.setDirection(Servo.Direction.REVERSE);
 
         timer = new ElapsedTime();
-
+        state = State.UNDEFINED;
         moveFront();
     }
 
     public void moveFront() {
-        servoLeft.setPosition(SERVO_FRONT);
-        servoRight.setPosition(SERVO_FRONT);
-        state = State.TRANSFER_MOVING_FRONT;
-        timer.reset();
+        if (state != State.TRANSFER_FRONT) {
+            servoLeft.setPosition(SERVO_FRONT);
+            servoRight.setPosition(SERVO_FRONT);
+            state = State.TRANSFER_MOVING_FRONT;
+            timer.reset();
+        }
     }
 
     public void moveBack() {
-        servoLeft.setPosition(SERVO_BACK);
-        servoRight.setPosition(SERVO_BACK);
-        state = State.TRANSFER_MOVING_BACK;
-        timer.reset();
+        if (state != State.TRANSFER_BACK) {
+            servoLeft.setPosition(SERVO_BACK);
+            servoRight.setPosition(SERVO_BACK);
+            state = State.TRANSFER_MOVING_BACK;
+            timer.reset();
+        }
     }
 
     public void update() {

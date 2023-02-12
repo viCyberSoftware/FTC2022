@@ -19,29 +19,13 @@ import org.firstinspires.ftc.teamcode.drive.linearSlideFunctions;
 import org.firstinspires.ftc.teamcode.util.Encoder;
 
 
-@TeleOp(name="Basic: Linear OpMode", group="Linear Opmode")
-public class BasicOpMode_Linear extends LinearOpMode {
-
-
-    // Declare OpMode members.
-    private ElapsedTime runtime = new ElapsedTime();
-    private Robot robot = new Robot();
-
-    @Override
+@TeleOp(name="Basic: testSebi", group="drive")
+public class testSebi extends LinearOpMode {
     public void runOpMode() {
-        telemetry.addData("Status", "Initialized");
-        telemetry.update();
-
-//        linearSlideFunctions.init(hardwareMap);
-
         waitForStart();
-        runtime.reset();
-        robot.init(hardwareMap,gamepad1,gamepad2);
-        while (opModeIsActive() && !isStopRequested()) {
-            robot.control();
-            telemetry.addData("timer closing: ", robot.claw.timerClosing.seconds());
-            telemetry.update();
-
+        Servo servo0 = hardwareMap.get(Servo.class, "servoFastenClaw");
+        while (opModeIsActive()) {
+            servo0.setPosition(1);
         }
     }
 }

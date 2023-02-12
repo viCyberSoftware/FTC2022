@@ -15,38 +15,41 @@ public class Claw {
         CLAW_DOWN,
         CLAW_ROTATING_UP,
         CLAW_ROTATING_DOWN,
+
+        UNDEFINED
     }
 
-    ;
-
-    static final double SERVO_OPEN = 0; //de updatat!!!
-    static final double SERVO_CLOSED = 0.8; //de updatat!!!
+    static final double SERVO_OPEN = 0.8; //de updatat!!!
+    static final double SERVO_CLOSED = 1; //de updatat!!!
     static final double SERVO_UP = 0; //de updatat!!!
-    static final double SERVO_DOWN = 0.8; //de updatat!!!
+    static final double SERVO_DOWN = 1.0; //de updatat!!!
 
     static final double CLOSING_TIME = 2; //in seconds!
     static final double ROTATING_TIME = 2; //in seconds!
 
-    public Servo servo = null;
+    public Servo servoFastenClaw = null;
+    public Servo servoRotateClaw = null;
     public State openState = null;
     public State rotationState = null;
     public ElapsedTime timerClosing = null;
     public ElapsedTime timerRotating = null;
 
     public void init(HardwareMap hardwareMap) {
-        servo = hardwareMap.get(Servo.class, "clawServo");
+        servoFastenClaw = hardwareMap.get(Servo.class, "servoFastenClaw");
+        servoRotateClaw = hardwareMap.get(Servo.class,"servoRotateClaw");
 
         timerClosing = new ElapsedTime();
         timerRotating = new ElapsedTime();
 
-        openState = Claw.State.CLAW_CLOSED;
-        rotationState = Claw.State.CLAW_UP;
+        openState = Claw.State.UNDEFINED;
+        rotationState = Claw.State.UNDEFINED;
 
         close();
         rotateUp();
     }
 
     public void update() {
+
         if (openState == State.CLAW_OPENING) {
             if (timerClosing.seconds() >= CLOSING_TIME) {
                 openState = State.CLAW_OPEN;
@@ -69,26 +72,39 @@ public class Claw {
     }
 
     public void rotateUp() {
-        servo.setPosition(SERVO_UP);
-        rotationState = State.CLAW_ROTATING_UP;
-        timerRotating.reset();
+        if (rotationState != State.CLAW_ROTATING_UP && rotationState != State.CLAW_UP) {
+            servoRotateClaw.setPosition(SERVO_UP);
+            rotationState = State.CLAW_ROTATING_UP;
+            timerRotating.reset();
+        }
     }
 
     public void rotateDown() {
-        servo.setPosition(SERVO_DOWN);
-        rotationState = State.CLAW_ROTATING_DOWN;
-        timerRotating.reset();
+        if (rotationState != State.CLAW_ROTATING_DOWN && rotationState != State.CLAW_DOWN) {
+            servoRotateClaw.setPosition(SERVO_DOWN);
+            rotationState = State.CLAW_ROTATING_DOWN;
+            timerRotating.reset();
+        }
     }
 
     public void open() {
-        servo.setPosition(SERVO_OPEN);
-        openState = State.CLAW_OPENING;
-        timerClosing.reset();
+        if (openState != State.CLAW_OPEN && openState != State.CLAW_OPENING) {
+            servoFastenClaw.setPosition(SERVO_OPEN);
+            openState = State.CLAW_OPENING;
+            timerClosing.reset();
+        }
     }
 
     public void close() {
-        servo.setPosition(SERVO_CLOSED);
-        openState = State.CLAW_CLOSING;
-        timerClosing.reset();
+        if (openState != State.CLAW_CLOSED && openState != State.CLAW_CLOSING) {
+            servoFastenClaw.setPosition(SERVO_CLOSED);
+            openState = State.CLAW_CLOSING;
+            timerClosing.reset();
+        }
+    }
+
+    public boolean canTransfer() {
+        return openState == State.CLAW_CLOSED &&
+               (rotationState == State.CLAW_UP || rotationState == State.CLAW_DOWN);
     }
 }

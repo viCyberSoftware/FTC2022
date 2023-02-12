@@ -19,6 +19,7 @@ public class Robot {
     public Claw claw = null;
     public LinearSlide linearSlide = null;
     public Controls controls = null;
+    public SampleMecanumDrive drive = null;
 
     public void init(HardwareMap hardwareMap, Gamepad gamepad1, Gamepad gamepad2) {
         claw = new Claw();
@@ -47,16 +48,8 @@ public class Robot {
     }
 
     private void initMecanumDrive(HardwareMap hardwareMap, Gamepad gamepad1, Gamepad gamepad2){
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        drive = new SampleMecanumDrive(hardwareMap);
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        drive.setWeightedDrivePower(
-                new Pose2d(
-                        -gamepad1.left_stick_y,
-                        -gamepad1.left_stick_x,
-                        -gamepad1.right_stick_x
-                )
-        );
-        drive.update();
     }
 
 }
