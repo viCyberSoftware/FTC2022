@@ -24,6 +24,7 @@ package org.firstinspires.ftc.teamcode.drive.Robot.OpenCV;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.apriltag.AprilTagDetection;
@@ -58,8 +59,8 @@ public class Camera
 
     AprilTagDetection tagOfInterest = null;
     public int getId(){
-        if(tagOfInterest != null)
-            return tagOfInterest.id;
+        if(this.tagOfInterest != null)
+            return this.tagOfInterest.id;
         else return -1;
     }
     public void init(HardwareMap hardwareMap)
@@ -89,7 +90,9 @@ public class Camera
          * The INIT-loop:
          * This REPLACES waitForStart!
          */
-        while (getId()==-1)
+        ElapsedTime timeInterval = new ElapsedTime();
+
+        while (getId()==-1 && timeInterval.milliseconds()<3000)
         {
             ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
 

@@ -35,14 +35,14 @@ public class Controls {
         if(gamepad2.cross){
             if(!crossIsPressed) {
                 crossIsPressed = true;
-                robot.linearSlide.moveTo(robot.linearSlide.state.SLIDER_GROUND);
+                robot.lower();
             }
         }else{
             crossIsPressed = false;
         }
         if(gamepad2.circle) {
             if (!circleIsPressed) {
-                robot.linearSlide.moveTo(robot.linearSlide.state.SLIDER_LOW);
+                robot.raiseToLowJunction();
                 circleIsPressed = true;
             }
         }
@@ -51,7 +51,7 @@ public class Controls {
         }
         if(gamepad2.triangle) {
             if (!triangleIsPressed) {
-                robot.linearSlide.moveTo(robot.linearSlide.state.SLIDER_MIDDLE);
+                robot.raiseToMiddleJunction();
                 triangleIsPressed = true;
             }
         }
@@ -60,7 +60,7 @@ public class Controls {
         }
         if(gamepad2.square) {
             if (!squareIsPressed) {
-                robot.linearSlide.moveTo(robot.linearSlide.state.SLIDER_HIGH);
+                robot.raiseToHighJunction();
                 squareIsPressed = true;
             }
         }
@@ -131,6 +131,7 @@ public class Controls {
             dpadDownIsPressed = false;
         }
         ////testing
+
         if(gamepad1.dpad_down){
             if(!ok1){
                 ok1 = true;
@@ -168,11 +169,12 @@ public class Controls {
         else{
             ok4 = false;
         }
+
 //////
         robot.drive.setWeightedDrivePower(
                 new Pose2d(
-                        -gamepad1.left_stick_y,
-                        -gamepad1.left_stick_x,
+                        gamepad1.left_stick_y,
+                        gamepad1.left_stick_x,
                         -gamepad1.right_stick_x
                 )
         );

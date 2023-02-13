@@ -19,8 +19,8 @@ public class Claw {
         UNDEFINED
     }
 
-    static final double SERVO_OPEN = 0.82; //de updatat!!!
-    static final double SERVO_CLOSED = 1; //de updatat!!!
+    static final double SERVO_OPEN = 0.80; //de updatat!!!
+    static final double SERVO_CLOSED = 0.98; //de updatat!!!
     static final double SERVO_UP = 0.30; //de updatat!!!
     static final double SERVO_DOWN = 0.95; //de updatat!!!
 

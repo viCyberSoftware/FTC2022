@@ -14,9 +14,9 @@ public class Transfer {
     }
 
     static final double SERVO_FRONT = 0.03; //de vazut!!!
-    static final double SERVO_BACK = 0.15; //devazut!!!
+    static final double SERVO_BACK = 0.135; //devazut!!! 0.15 initial
 
-    static final double MOVING_TIME = 0.8; //in seconds!
+    static final double MOVING_TIME = 0.2; //in seconds!
 
     public Servo servoLeft = null;
     public Servo servoRight = null;

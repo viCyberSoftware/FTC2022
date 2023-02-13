@@ -15,6 +15,40 @@ import org.firstinspires.ftc.teamcode.drive.Robot.Claw;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 public class Robot {
+    /*public static class FSM {
+        enum Action {
+            IDLE,
+            RAISING_TO_LOW_JUNCTION,
+            RAISING_TO_MIDDLE_JUNCTION,
+            RAISING_TO_HIGH_JUNCTION,
+            LOWERING,
+        }
+        enum Transfer {
+            IDLE,
+            ROTATING_CLAW,
+            TRANSFERRING
+        }
+        enum Slides {
+            IDLE,
+            MOVING_UP,
+            MOVING_DOWN
+        }
+
+        Action action = Action.IDLE;
+        Transfer transfer = Transfer.IDLE;
+        Slides slides = Slides.IDLE;
+    }*/
+
+    enum Action {
+        IDLE,
+        RAISING_TO_LOW_JUNCTION,
+        RAISING_TO_MIDDLE_JUNCTION,
+        RAISING_TO_HIGH_JUNCTION,
+        LOWERING
+    }
+
+    Action action = Action.IDLE;
+
     public Transfer transfer = null;
     public Claw claw = null;
     public LinearSlide linearSlide = null;
@@ -37,10 +71,69 @@ public class Robot {
         initMecanumDrive(hardwareMap,gamepad1,gamepad2);
     }
 
+    public void raiseToLowJunction() {
+        if (claw.openState == Claw.State.CLAW_CLOSED) {
+            action = Action.RAISING_TO_LOW_JUNCTION;
+            linearSlide.moveTo(LinearSlide.State.SLIDER_LOW);
+        }
+    }
+
+    public void raiseToMiddleJunction() {
+        if (claw.openState == Claw.State.CLAW_CLOSED) {
+            action = Action.RAISING_TO_MIDDLE_JUNCTION;
+            linearSlide.moveTo(LinearSlide.State.SLIDER_MIDDLE);
+        }
+    }
+
+    public void raiseToHighJunction() {
+        if (claw.openState == Claw.State.CLAW_CLOSED) {
+            action = Action.RAISING_TO_HIGH_JUNCTION;
+            linearSlide.moveTo(LinearSlide.State.SLIDER_HIGH);
+        }
+    }
+
+    public void lower() {
+        action = Action.LOWERING;
+        linearSlide.moveTo(LinearSlide.State.SLIDER_GROUND);
+    }
+
     public void update() {
         claw.update();
         transfer.update();
         linearSlide.update();
+
+        switch (action) {
+            case RAISING_TO_LOW_JUNCTION:
+            case RAISING_TO_MIDDLE_JUNCTION:
+            case RAISING_TO_HIGH_JUNCTION: {
+                claw.rotateDown();
+                if (claw.rotationState == Claw.State.CLAW_DOWN
+                    && linearSlide.motorsAtTarget()
+                    && transfer.state != Transfer.State.TRANSFER_BACK) {
+                    transfer.moveBack();
+                }
+                if (claw.rotationState == Claw.State.CLAW_DOWN
+                    && transfer.state == Transfer.State.TRANSFER_BACK
+                    && linearSlide.motorsAtTarget()) {
+                    action = Action.IDLE;
+                }
+                break;
+            }
+            case LOWERING: {
+                if (claw.openState != Claw.State.CLAW_CLOSED) {
+                    claw.close();
+                } else if (claw.rotationState != Claw.State.CLAW_UP) {
+                    claw.rotateUp();
+                } else {
+                    transfer.moveFront();
+                    if (linearSlide.motorsAtTarget()) {
+                        claw.open();
+                        action = Action.IDLE;
+                    }
+                }
+                break;
+            }
+        }
     }
 
     public void control(){
