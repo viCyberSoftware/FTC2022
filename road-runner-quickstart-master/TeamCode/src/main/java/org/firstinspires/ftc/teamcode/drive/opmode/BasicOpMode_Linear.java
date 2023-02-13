@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.drive.opmode;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -33,13 +35,14 @@ public class BasicOpMode_Linear extends LinearOpMode {
         telemetry.update();
 
 //        linearSlideFunctions.init(hardwareMap);
-
+        robot.init(hardwareMap,gamepad1,gamepad2);
         waitForStart();
         runtime.reset();
-        robot.init(hardwareMap,gamepad1,gamepad2);
         while (opModeIsActive() && !isStopRequested()) {
             robot.control();
+            telemetry.addData("position of transfer",robot.transfer.servoLeft.getPosition());
             telemetry.addData("timer closing: ", robot.claw.timerClosing.seconds());
+            telemetry.addData("position of fastenClaw",robot.claw.servoFastenClaw.getPosition());
             telemetry.update();
 
         }

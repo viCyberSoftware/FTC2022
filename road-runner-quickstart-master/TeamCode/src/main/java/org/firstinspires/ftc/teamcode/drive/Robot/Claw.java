@@ -19,13 +19,13 @@ public class Claw {
         UNDEFINED
     }
 
-    static final double SERVO_OPEN = 0.8; //de updatat!!!
+    static final double SERVO_OPEN = 0.82; //de updatat!!!
     static final double SERVO_CLOSED = 1; //de updatat!!!
-    static final double SERVO_UP = 0; //de updatat!!!
-    static final double SERVO_DOWN = 1.0; //de updatat!!!
+    static final double SERVO_UP = 0.30; //de updatat!!!
+    static final double SERVO_DOWN = 0.95; //de updatat!!!
 
-    static final double CLOSING_TIME = 2; //in seconds!
-    static final double ROTATING_TIME = 2; //in seconds!
+    static final double CLOSING_TIME = 0.3; //in seconds!
+    static final double ROTATING_TIME = 0.3; //in seconds!
 
     public Servo servoFastenClaw = null;
     public Servo servoRotateClaw = null;
@@ -86,6 +86,14 @@ public class Claw {
             timerRotating.reset();
         }
     }
+    ////testing
+    public void openTesting(){
+        servoFastenClaw.setPosition(servoFastenClaw.getPosition() - 0.005);
+    }
+    public void closeTesting(){
+        servoFastenClaw.setPosition(servoFastenClaw.getPosition() + 0.005);
+    }
+    ////
 
     public void open() {
         if (openState != State.CLAW_OPEN && openState != State.CLAW_OPENING) {

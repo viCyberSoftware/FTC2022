@@ -13,10 +13,10 @@ public class Transfer {
         UNDEFINED
     }
 
-    static final double SERVO_FRONT = 0.05; //de vazut!!!
-    static final double SERVO_BACK = 0.05; //devazut!!!
+    static final double SERVO_FRONT = 0.03; //de vazut!!!
+    static final double SERVO_BACK = 0.15; //devazut!!!
 
-    static final double MOVING_TIME = 2; //in seconds!
+    static final double MOVING_TIME = 0.8; //in seconds!
 
     public Servo servoLeft = null;
     public Servo servoRight = null;
@@ -40,6 +40,15 @@ public class Transfer {
             state = State.TRANSFER_MOVING_FRONT;
             timer.reset();
         }
+    }
+    ////de test
+    public void moveBackTesting(){
+        servoLeft.setPosition(servoLeft.getPosition()-0.005);
+        servoRight.setPosition((servoRight.getPosition()-0.005));
+    }
+    public void moveFrontTesting(){
+        servoLeft.setPosition(servoLeft.getPosition()+0.005);
+        servoRight.setPosition((servoRight.getPosition()+0.005));
     }
 
     public void moveBack() {
