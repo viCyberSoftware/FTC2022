@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 @Autonomous(name="AutoRight",group = "drive")
 
-public class AutoLeft extends LinearOpMode {
+public class AutoRight2 extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
     private Camera camera;
@@ -25,17 +25,55 @@ public class AutoLeft extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         camera = new Camera();
-        camera.init(hardwareMap);
         robot = new Robot();
-        robot.init(hardwareMap,gamepad1,gamepad2);
+        robot.initPark(hardwareMap);
+
+        //open claw to fit in 18 inch cube
 
         waitForStart();
+        robot.claw.init(hardwareMap);
+        robot.update();
+        sleep(1000);
+        robot.update();
+        robot.claw.open();
+        robot.update();
+        sleep(1000);
+        robot.claw.close();
+        robot.update();
+        robot.transfer.init(hardwareMap);
+        ElapsedTime timer = new ElapsedTime();
+        timer.reset();
+        while (timer.seconds() < 1) {sleep(10);}
+        robot.transfer.movePark();
+        timer.reset();
+        while (timer.seconds() < 1) {sleep(10);}
+        robot.transfer.moveFront();
+        timer.reset();
+        while (timer.seconds() < 1) {sleep(10);}
+        //load cone
+
+        robot.claw.open();
+        robot.claw.servoFastenClaw.setPosition(82);
+         timer.reset();
+        while (timer.seconds() < 1) {sleep(10);}
+        robot.transfer.moveFront();
+
+        timer.reset();
+        while (timer.seconds() < 1) {sleep(10);}
+
+        robot.claw.close();
+        timer.reset(); while (timer.seconds() < 1) {sleep(10);}
+
+        robot.transfer.movePark();
+
         camera.init(hardwareMap);
+        /*
         while (opModeIsActive() && !isStopRequested()) {
             telemetry.addData("id", camera.getId());
             telemetry.update();
-        }
-        //moveToPark(camera.getId());
+         */
+
+        moveToPark(camera.getId());
 
     }
     public void moveToPark(int position){

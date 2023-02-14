@@ -30,8 +30,8 @@ public class LinearSlide {
         SLIDER_STATIONARY
     }
 
-    public static DcMotorEx motorSlideLeft = null;
-    public static DcMotorEx motorSlideRight = null;
+    public DcMotorEx motorSlideLeft = null;
+    public DcMotorEx motorSlideRight = null;
 
     public State state = null;
     public Stage stage = null;
@@ -70,7 +70,7 @@ public class LinearSlide {
     }
 
     public boolean motorsAtTarget() { //MODIFICAT ATENTIE APROXIMATIV
-        return Math.abs(motorSlideRight.getCurrentPosition() - motorSlideRight.getTargetPosition()) <= 20 ;
+        return (Math.abs(motorSlideRight.getCurrentPosition() - motorSlideRight.getTargetPosition()) <= 30);
         //return (motorSlideRight.getCurrentPosition() == motorSlideRight.getTargetPosition() || motorSlideLeft.getCurrentPosition() == motorSlideLeft.getTargetPosition());
     }
 
@@ -102,10 +102,11 @@ public class LinearSlide {
         this.state = State.SLIDER_FREE_CONTROL;
         stage = Stage.SLIDER_MOVING_UP;
         int newPosition = motorSlideLeft.getCurrentPosition() + distance;// de vazut
-        if (newPosition <= State.SLIDER_HIGH.position)
+        if (newPosition <= State.SLIDER_HIGH.position) {
             setTargetPosition(newPosition);
             motorsOn();
         }
+    }
 
     public void moveDown(int distance) {
         this.state = State.SLIDER_FREE_CONTROL;

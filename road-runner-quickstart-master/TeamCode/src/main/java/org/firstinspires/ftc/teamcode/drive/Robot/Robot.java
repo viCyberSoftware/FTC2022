@@ -8,6 +8,8 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.drive.Robot.Controls;
 import org.firstinspires.ftc.teamcode.drive.Robot.Transfer;
 import org.firstinspires.ftc.teamcode.drive.Robot.LinearSlide;
@@ -39,7 +41,7 @@ public class Robot {
         Slides slides = Slides.IDLE;
     }*/
 
-    enum Action {
+    public enum Action {
         IDLE,
         RAISING_TO_LOW_JUNCTION,
         RAISING_TO_MIDDLE_JUNCTION,
@@ -47,15 +49,18 @@ public class Robot {
         LOWERING
     }
 
-    Action action = Action.IDLE;
+    public Action action = Action.IDLE;
 
     public Transfer transfer = null;
     public Claw claw = null;
     public LinearSlide linearSlide = null;
     public Controls controls = null;
     public SampleMecanumDrive drive = null;
+    public Telemetry telemetry = null;
 
-    public void init(HardwareMap hardwareMap, Gamepad gamepad1, Gamepad gamepad2) {
+    public void init(HardwareMap hardwareMap, Gamepad gamepad1, Gamepad gamepad2, Telemetry _telemetry) {
+        telemetry = _telemetry;
+
         claw = new Claw();
         claw.init(hardwareMap);
 
@@ -68,17 +73,27 @@ public class Robot {
         controls = new Controls();
         controls.init(gamepad1,gamepad2);
 
-        initMecanumDrive(hardwareMap,gamepad1,gamepad2);
+        initMecanumDrive(hardwareMap);
+    }
+    public void initPark(HardwareMap hardwareMap){
+        claw = new Claw();
+
+        transfer = new Transfer();
+
+        linearSlide = new LinearSlide();
+        linearSlide.init(hardwareMap);
+
+        initMecanumDrive(hardwareMap);
     }
 
-    public void raiseToLowJunction() {
+    public void raiseToLowJunction(){
         if (claw.openState == Claw.State.CLAW_CLOSED) {
             action = Action.RAISING_TO_LOW_JUNCTION;
             linearSlide.moveTo(LinearSlide.State.SLIDER_LOW);
         }
     }
 
-    public void raiseToMiddleJunction() {
+    public void raiseToMiddleJunction(){
         if (claw.openState == Claw.State.CLAW_CLOSED) {
             action = Action.RAISING_TO_MIDDLE_JUNCTION;
             linearSlide.moveTo(LinearSlide.State.SLIDER_MIDDLE);
@@ -126,21 +141,27 @@ public class Robot {
                     claw.rotateUp();
                 } else {
                     transfer.moveFront();
+                    telemetry.addLine("aici1");
                     if (linearSlide.motorsAtTarget()) {
+                        telemetry.addLine("aici2");
                         claw.open();
                         action = Action.IDLE;
                     }
                 }
                 break;
-            }
+             }
         }
+
+        claw.update();
+        transfer.update();
+        linearSlide.update();
     }
 
     public void control(){
         controls.control(this);
     }
 
-    private void initMecanumDrive(HardwareMap hardwareMap, Gamepad gamepad1, Gamepad gamepad2){
+    private void initMecanumDrive(HardwareMap hardwareMap){
         drive = new SampleMecanumDrive(hardwareMap);
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }

@@ -92,7 +92,7 @@ public class Camera
          */
         ElapsedTime timeInterval = new ElapsedTime();
 
-        while (getId()==-1 && timeInterval.milliseconds()<3000)
+        while (getId()==-1 && timeInterval.milliseconds()<10000)
         {
             ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
 

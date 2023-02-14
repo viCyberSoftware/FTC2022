@@ -15,6 +15,7 @@ public class Claw {
         CLAW_DOWN,
         CLAW_ROTATING_UP,
         CLAW_ROTATING_DOWN,
+        CLAW_PARK,
 
         UNDEFINED
     }
@@ -23,7 +24,7 @@ public class Claw {
     static final double SERVO_CLOSED = 0.98; //de updatat!!!
     static final double SERVO_UP = 0.30; //de updatat!!!
     static final double SERVO_DOWN = 0.95; //de updatat!!!
-
+    static final double SERVO_PARK = 0.78;
     static final double CLOSING_TIME = 0.3; //in seconds!
     static final double ROTATING_TIME = 0.3; //in seconds!
 
@@ -108,6 +109,11 @@ public class Claw {
             servoFastenClaw.setPosition(SERVO_CLOSED);
             openState = State.CLAW_CLOSING;
             timerClosing.reset();
+        }
+    }
+    public void park(){
+        if(openState != State.CLAW_PARK){
+            servoFastenClaw.setPosition(SERVO_PARK);
         }
     }
 

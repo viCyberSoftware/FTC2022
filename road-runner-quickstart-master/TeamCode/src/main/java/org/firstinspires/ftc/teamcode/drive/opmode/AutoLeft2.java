@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 @Autonomous(name="AutoLeft",group = "drive")
 
-public class AutoRight extends LinearOpMode {
+public class AutoLeft2 extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
     private Camera camera;
@@ -25,13 +25,43 @@ public class AutoRight extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         camera = new Camera();
-        camera.init(hardwareMap);
+
         robot = new Robot();
-        robot.init(hardwareMap,gamepad1,gamepad2);
+        robot.initPark(hardwareMap);
+
+        //open claw to fit in 18 inch cube
+
         waitForStart();
-        telemetry.addData("id",camera.getId());
-        telemetry.update();
-        moveToPark(camera.getId());
+
+        robot.claw.init(hardwareMap);
+        robot.transfer.init(hardwareMap);
+        ElapsedTime timer = new ElapsedTime();
+        timer.reset();
+        while (timer.seconds() < 1) {sleep(10);}
+        robot.transfer.movePark();
+        timer.reset();
+        while (timer.seconds() < 1) {sleep(10);}
+        robot.transfer.moveFront();
+        timer.reset();
+        while (timer.seconds() < 1) {sleep(10);}
+        //load cone
+
+        robot.claw.open();
+        robot.claw.servoFastenClaw.setPosition(82);
+        timer.reset();
+        while (timer.seconds() < 1) {sleep(10);}
+        robot.transfer.moveFront();
+
+        timer.reset();
+        while (timer.seconds() < 1) {sleep(10);}
+
+        robot.claw.close();
+        timer.reset(); while (timer.seconds() < 1) {sleep(10);}
+
+        robot.transfer.movePark();
+
+        camera.init(hardwareMap);
+       moveToPark(camera.getId());
         //robot.transfer.moveBack();
 
     }
