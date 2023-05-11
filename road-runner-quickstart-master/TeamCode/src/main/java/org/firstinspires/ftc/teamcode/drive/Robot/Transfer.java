@@ -14,7 +14,7 @@ public class Transfer {
         UNDEFINED
     }
 
-    static final double SERVO_FRONT = 0.03; //de vazut!!!
+    static final double SERVO_FRONT = 0.028; //de vazut!!!
     static final double SERVO_BACK = 0.135; //devazut!!! 0.15 initial
     static final double SERVO_PARK = 0.035;
 

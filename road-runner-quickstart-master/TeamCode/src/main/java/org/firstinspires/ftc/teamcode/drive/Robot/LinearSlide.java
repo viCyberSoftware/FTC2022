@@ -70,16 +70,16 @@ public class LinearSlide {
     }
 
     public boolean motorsAtTarget() { //MODIFICAT ATENTIE APROXIMATIV
-        return (Math.abs(motorSlideRight.getCurrentPosition() - motorSlideRight.getTargetPosition()) <= 30);
+        return (Math.abs(motorSlideRight.getCurrentPosition() - motorSlideRight.getTargetPosition()) <= 40);
         //return (motorSlideRight.getCurrentPosition() == motorSlideRight.getTargetPosition() || motorSlideLeft.getCurrentPosition() == motorSlideLeft.getTargetPosition());
     }
 
-    private void motorsOn() {
-        setMotorsPower(0.8);
+    public void motorsOn() {
+        setMotorsPower(1);
     }
 
-    private void motorsOff() {
-        setMotorsPower(0);
+    public void motorsOff() {
+        setMotorsPower(1);
     }
 
     public boolean slidersMoving() {

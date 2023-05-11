@@ -51,6 +51,8 @@ public class Robot {
 
     public Action action = Action.IDLE;
 
+    public ElapsedTime loweringTimeout = null;
+
     public Transfer transfer = null;
     public Claw claw = null;
     public LinearSlide linearSlide = null;
@@ -73,6 +75,8 @@ public class Robot {
         controls = new Controls();
         controls.init(gamepad1,gamepad2);
 
+        loweringTimeout = new ElapsedTime();
+
         initMecanumDrive(hardwareMap);
     }
     public void initPark(HardwareMap hardwareMap){
@@ -86,9 +90,10 @@ public class Robot {
         initMecanumDrive(hardwareMap);
     }
 
-    public void raiseToLowJunction(){
+    public void raiseToLowJunction() {
         if (claw.openState == Claw.State.CLAW_CLOSED) {
             action = Action.RAISING_TO_LOW_JUNCTION;
+            linearSlide.motorsOn();
             linearSlide.moveTo(LinearSlide.State.SLIDER_LOW);
         }
     }
@@ -96,6 +101,7 @@ public class Robot {
     public void raiseToMiddleJunction(){
         if (claw.openState == Claw.State.CLAW_CLOSED) {
             action = Action.RAISING_TO_MIDDLE_JUNCTION;
+            linearSlide.motorsOn();
             linearSlide.moveTo(LinearSlide.State.SLIDER_MIDDLE);
         }
     }
@@ -103,12 +109,17 @@ public class Robot {
     public void raiseToHighJunction() {
         if (claw.openState == Claw.State.CLAW_CLOSED) {
             action = Action.RAISING_TO_HIGH_JUNCTION;
+            ///test
+            loweringTimeout.reset();
+            linearSlide.motorsOn();
             linearSlide.moveTo(LinearSlide.State.SLIDER_HIGH);
         }
     }
 
     public void lower() {
         action = Action.LOWERING;
+        loweringTimeout.reset();
+        linearSlide.motorsOn();
         linearSlide.moveTo(LinearSlide.State.SLIDER_GROUND);
     }
 
@@ -121,6 +132,10 @@ public class Robot {
             case RAISING_TO_LOW_JUNCTION:
             case RAISING_TO_MIDDLE_JUNCTION:
             case RAISING_TO_HIGH_JUNCTION: {
+                if (loweringTimeout.seconds() >= 3) {
+                    action = Action.IDLE;
+                    break;
+                }
                 claw.rotateDown();
                 if (claw.rotationState == Claw.State.CLAW_DOWN
                     && linearSlide.motorsAtTarget()
@@ -135,6 +150,12 @@ public class Robot {
                 break;
             }
             case LOWERING: {
+                //timeout
+                if (loweringTimeout.seconds() >= 3) {
+                    action = Action.IDLE;
+                    break;
+                }
+
                 if (claw.openState != Claw.State.CLAW_CLOSED) {
                     claw.close();
                 } else if (claw.rotationState != Claw.State.CLAW_UP) {
@@ -145,6 +166,7 @@ public class Robot {
                     if (linearSlide.motorsAtTarget()) {
                         telemetry.addLine("aici2");
                         claw.open();
+                        linearSlide.motorsOff();
                         action = Action.IDLE;
                     }
                 }
@@ -152,9 +174,9 @@ public class Robot {
              }
         }
 
-        claw.update();
-        transfer.update();
-        linearSlide.update();
+        //claw.update();
+        //transfer.update();
+        //linearSlide.update();
     }
 
     public void control(){
